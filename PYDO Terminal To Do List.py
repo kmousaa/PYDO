@@ -4,17 +4,22 @@ import colorama
 from colorama import Fore, Back, Style
 
 # Welcome message 
-print(Back.BLACK + Fore.WHITE + "=" * 60)
-print(Back.BLACK + Fore.WHITE + "      ██████╗ ██╗   ██╗██████╗  ██████╗ ")
-print(Back.BLACK + Fore.WHITE +"      ██╔══██╗╚██╗ ██╔╝██╔══██╗██╔═══██╗")
-print(Back.BLACK + Fore.WHITE +"      ██████╔╝ ╚████╔╝ ██║  ██║██║   ██║")
-print(Back.BLACK + Fore.WHITE +"      ██╔═══╝   ╚██╔╝  ██║  ██║██║   ██║")
-print(Back.BLACK + Fore.WHITE +"      ██║        ██║   ██████╔╝╚██████╔╝")
-print(Back.BLACK + Fore.WHITE +"      ╚═╝        ╚═╝   ╚═════╝  ╚═════╝ ")
+
+colorama.init()
+colorama.init()
+print(Back.BLACK, end="")
+print(Fore.WHITE + "=" * 60 + "   ")
+print(Fore.WHITE + "      ██████╗ ██╗   ██╗██████╗  ██████╗                        ")
+print(Fore.WHITE +"      ██╔══██╗╚██╗ ██╔╝██╔══██╗██╔═══██╗                       ")
+print(Fore.WHITE +"      ██████╔╝ ╚████╔╝ ██║  ██║██║   ██║                       ")
+print(Fore.WHITE +"      ██╔═══╝   ╚██╔╝  ██║  ██║██║   ██║                       ")
+print(Fore.WHITE +"      ██║        ██║   ██████╔╝╚██████╔╝                       ")
+print(Fore.WHITE +"      ╚═╝        ╚═╝   ╚═════╝  ╚═════╝                        ")
+print("=" * 60 + "   ") 
+print("   Welcome to PyDo, by Karim Mousa                             ")
+print("   The simplest Python terminal to-do list                     ")
+print("   Get started by typing \"help\"                                ")
 print("=" * 60)
-print("   Welcome to PyDo, by Karim Mousa")
-print("   The simplest Python terminal to-do list")
-print("   Get started by typing \"help\" ")
 print("=" * 60)
 
 
@@ -41,22 +46,51 @@ class todo:
         self.list_name = name
         self.date = datetime.datetime.now()
         self.todo_list = {}
+    
+    def complete(self,num):
+        print(self.todo_list[num])
+        self.todo_list[num][1] = True 
+
+    def uncomplete(self,num):
+        self.todo_list[num][1] = False 
+
+    def delete(self,num):
+        self.todo_list.pop(num)
 
     def print_list(self):
         # showcase list
         print()
         print(Fore.CYAN + "=" * 60)
-        print("Name:              " + self.list_name)
+
+        # Main metadata
+        print(Fore.CYAN +  f"{'Name:':15} {Fore.LIGHTYELLOW_EX + self.list_name}")
+
         day = ordinal(self.date.day)
         month = self.date.strftime("%B")
         year = str(self.date.year)
-        print("Creation Date:     " + self.date.strftime("%A ") + " " + day + " " + month + " " + year)
+
+        print(Fore.CYAN + f"{'Date:':15} {Fore.LIGHTMAGENTA_EX + self.date.strftime("%A ") + " " + day + " " + month + " " + year}")
+        print()
+
+        #Interesting Metadata
+        print(Fore.LIGHTYELLOW_EX)
+        print(Fore.CYAN + f"{'Total Tasks:':15} {Fore.LIGHTBLUE_EX + str(len(self.todo_list)) }")
+        print(Fore.CYAN + f"{'Completed:':15} {Fore.GREEN + str(len([x for x in self.todo_list.values() if x[1] == True]))}")
+        print(Fore.CYAN + f"{'Uncompleted:':15} {Fore.RED + str(len([x for x in self.todo_list.values() if x[1] == False]))}")
+        print(Fore.CYAN + f"{'Completion:':15} {Fore.WHITE  + str(round(len([x for x in self.todo_list.values() if x[1] == True])/len(self.todo_list)*100, 2)) + Fore.WHITE + '%' if len(self.todo_list) > 0 else Fore.WHITE + 'N/A'}")
+
+
         print(Fore.CYAN + "=" * 60)
         print("LIST: ")
         print()
+
+        # Print out list items
         for key, value in self.todo_list.items():
-            mark = (Fore.GREEN + "✓") if value[1] else (Fore.RED + "✗")
-            print(Fore.WHITE + f" ◉ {key:<3} ➱ {value[0]:<25} " + mark + Fore.WHITE)
+            if value[1]:
+                print(Fore.GREEN + f" ◉ {key:<3}" + Fore.WHITE + f"➱ {value[0]:<25} " + Fore.GREEN + "✓" + Fore.WHITE)
+            else:
+                print(Fore.RED + f" ◉ {key:<3}" + Fore.WHITE + f"➱ {value[0]:<25} " + Fore.RED + "✗" + Fore.WHITE)
+
         print(Fore.CYAN + "=" * 60)
         print()
 
@@ -105,19 +139,40 @@ def select_list(list_name):
         global_lists[list_name].print_list()
 
         # Run commands 
-        print(Fore.CYAN + "Available commands: " + Fore.YELLOW + "add [task], del [task], com [task no] ,view, back" + Fore.RESET)
+        print(Fore.CYAN + "[TODO: " + list_name + "] " + "Available commands: " + Fore.YELLOW + "add [task], del [task], com [task no], uncom [task no] , view, help, back" + Fore.RESET)
         list_instance = global_lists[list_name]
         while True:
             action = input(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.YELLOW  + ">> ")
             parsed = action.split(" ")
             if parsed[0] == "add":
-                    list_instance.todo_list[str(len(list_instance.todo_list)+1)] = (''.join(parsed[1:]), False)
+                    list_instance.todo_list[str(len(list_instance.todo_list)+1)] = [''.join(parsed[1:]), False]
                     print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.MAGENTA + "Task \"" + ' '.join(parsed[1:]) + "\" has been added to the list!" + Fore.RESET)
 
+            elif parsed[0] == "help":
+                print(Fore.CYAN + "[TODO: " + list_name + "] " + "Available commands: " + Fore.YELLOW + "add [task], del [task], com [task no], uncom [task no], view, help, back" + Fore.RESET)
 
-            # WORK IN PROGRESS
             elif parsed[0] == "com":
-                    print(list_instance.todo_list)
+                    try:
+                        list_instance.complete(parsed[1])
+                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.GREEN + "✓ Task " + parsed[1] + " has been marked as completed!" + Fore.RESET)
+                    except:
+                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "✗ ERROR: Task number \"" + parsed[1] + "\" is invalid!" + Fore.RESET)
+    
+
+            elif parsed[0] == "uncom":
+                    try:
+                        list_instance.uncomplete(parsed[1])
+                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "✗ Task " + parsed[1] + " is now marked as uncompleted!" + Fore.RESET)
+                    except:
+                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "ERROR: Task number \"" + parsed[1] + "\" is invalid!" + Fore.RESET)
+    
+            elif parsed[0] == "del":
+                    try:
+                        list_instance.delete(parsed[1])
+                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "Task " + parsed[1] + " has been deleted from the list!" + Fore.RESET)
+                    except:
+                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "ERROR: Task number \"" + parsed[1] + "\" is invalid!" + Fore.RESET)
+
 
 
             elif parsed[0] == "view":
@@ -143,6 +198,7 @@ def list_help():
     print("Available commands:")
     print(Fore.CYAN + "➪ Create [list name] - Create a new to-do list with the specified name")
     print(Fore.CYAN + "➪ Select [list name] - To view a specific list")
+    print(Fore.CYAN + "➪ Delete [list name] - To delete a specific list")
     print(Fore.CYAN + "➪ View - View all lists")
     print(Fore.CYAN + "➪ Exit - Exit the program")
     print()
@@ -154,7 +210,7 @@ def list_help():
 # Main selector 
 while True:
     print()
-    
+
     # Ask for the next action needed
     command = input(Fore.GREEN + "What action would you like to perform?" + Fore.YELLOW + "\n >> ")
     parsed = command.split(" ")
@@ -163,10 +219,6 @@ while True:
         print()
         print(Fore.RED + "ERROR: Command cannot be empty" + Fore.RESET)
         continue
-
-    elif len(parsed) == 1:
-        print()
-        print(Fore.RED + "ERROR: Command \"" + command + "\" is incomplete" + Fore.RESET)
 
     elif parsed[0] == "create":
         if parsed[1].strip() == "":
@@ -183,6 +235,15 @@ while True:
 
     elif parsed[0] == "help":
         list_help()
+
+    elif parsed[0] == "delete":
+        if parsed[1] in global_lists:
+            global_lists.pop(parsed[1])
+            print()
+            print(Fore.MAGENTA + "List \"" + parsed[1] + "\" has been deleted successfully!" + Fore.RESET)
+        else:
+            print()
+            print(Fore.RED + "ERROR: List \"" + parsed[1] + "\" does not exist " + Fore.RESET)
 
 
     # End program
