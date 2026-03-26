@@ -61,6 +61,8 @@ class todo:
         # showcase list
         print()
         print(Fore.CYAN + "=" * 60)
+        print(Fore.CYAN + "=" * 60)
+
 
         # Main metadata
         print(Fore.CYAN +  f"{'Name:':15} {Fore.LIGHTYELLOW_EX + self.list_name}")
@@ -78,8 +80,6 @@ class todo:
         print(Fore.CYAN + f"{'Completed:':15} {Fore.GREEN + str(len([x for x in self.todo_list.values() if x[1] == True]))}")
         print(Fore.CYAN + f"{'Uncompleted:':15} {Fore.RED + str(len([x for x in self.todo_list.values() if x[1] == False]))}")
         print(Fore.CYAN + f"{'Completion:':15} {Fore.WHITE  + str(round(len([x for x in self.todo_list.values() if x[1] == True])/len(self.todo_list)*100, 2)) + Fore.WHITE + '%' if len(self.todo_list) > 0 else Fore.WHITE + 'N/A'}")
-
-
         print(Fore.CYAN + "=" * 60)
         print("LIST: ")
         print()
@@ -92,16 +92,17 @@ class todo:
                 print(Fore.RED + f" ◉ {key:<3}" + Fore.WHITE + f"➱ {value[0]:<25} " + Fore.RED + "✗" + Fore.WHITE)
 
         print(Fore.CYAN + "=" * 60)
-        print()
+        print(Fore.CYAN + "=" * 60)
 
-        
+        print()
+   
 
 # List Creation Functions in the main page 
-
 def create_list(list_name):
     print()    
     if list_name not in global_lists:
-        global_lists[parsed[1]] = todo(list_name)
+        list_object = todo(list_name)
+        global_lists[list_name] = list_object
         print(Fore.MAGENTA + "List \"" + list_name + "\" created successfully!" + Fore.RESET)
         select_list(list_name)
     else:
@@ -145,7 +146,7 @@ def select_list(list_name):
             action = input(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.YELLOW  + ">> ")
             parsed = action.split(" ")
             if parsed[0] == "add":
-                    list_instance.todo_list[str(len(list_instance.todo_list)+1)] = [''.join(parsed[1:]), False]
+                    list_instance.todo_list[str(len(list_instance.todo_list)+1)] = [" ".join(parsed[1:]), False]
                     print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.MAGENTA + "Task \"" + ' '.join(parsed[1:]) + "\" has been added to the list!" + Fore.RESET)
 
             elif parsed[0] == "help":
@@ -167,8 +168,18 @@ def select_list(list_name):
                         print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "ERROR: Task number \"" + parsed[1] + "\" is invalid!" + Fore.RESET)
     
             elif parsed[0] == "del":
+
                     try:
                         list_instance.delete(parsed[1])
+
+                        # renumber tasks
+                        new_list = {}
+                        i = 1
+                        for key, value in list_instance.todo_list.items():
+                            new_list[str(i)] = value
+                            i += 1
+                        list_instance.todo_list = new_list
+
                         print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "Task " + parsed[1] + " has been deleted from the list!" + Fore.RESET)
                     except:
                         print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "ERROR: Task number \"" + parsed[1] + "\" is invalid!" + Fore.RESET)
@@ -191,7 +202,7 @@ def select_list(list_name):
 
 
                     
-
+# Lists out all commands possible 
 def list_help():
     print()
     print(Fore.CYAN + "=" * 60)
@@ -203,7 +214,6 @@ def list_help():
     print(Fore.CYAN + "➪ Exit - Exit the program")
     print()
     print(Fore.CYAN + "=" * 60)
-
 
 
 
