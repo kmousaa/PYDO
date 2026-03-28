@@ -1,7 +1,10 @@
 
 import datetime
+import json
 import colorama 
 from colorama import Fore, Back, Style
+import time
+import os
 
 # Welcome message 
 
@@ -42,10 +45,10 @@ def ordinal(n):
 
 # Class used to define to-do list
 class todo: 
-    def __init__(self,name):
+    def __init__(self,name, time = None, list = None):
         self.list_name = name
-        self.date = datetime.datetime.now()
-        self.todo_list = {}
+        self.date = time or datetime.datetime.now()
+        self.todo_list = list or {}
     
     def complete(self,num):
         print(self.todo_list[num])
@@ -217,6 +220,36 @@ def list_help():
 
 
 
+# START - Load Save if it exists
+try:
+
+    with open('pydosave.txt', 'r+') as file:
+
+        choice = input(Fore.YELLOW + "Load save? (Y/N): ")
+        if choice == "y" or choice == "Y":  
+            data = json.load(file)
+            # Re populate the global list
+            for name, todoitem in data.items():
+                global_lists[name] = todo(
+                todoitem["list_name"],
+                datetime.datetime.fromisoformat(todoitem["date"]),
+                todoitem["todo_list"]
+            )
+            print(Fore.YELLOW + "Save file loaded successfully!" + Fore.RESET)
+        else:
+            file.seek(0)
+            file.truncate()
+            print(Fore.YELLOW + "Starting a new session..." + Fore.RESET)
+
+except:
+    print(Fore.RED + "Could not load save file") 
+    pass
+
+
+print()
+list_help()
+print()
+
 # Main selector 
 while True:
     print()
@@ -259,6 +292,25 @@ while True:
     # End program
     elif parsed[0] == "exit":
         print()
+        print(Fore.MAGENTA + "Saving todo's.....")
+        time.sleep(1.5)
+
+        # Make the dumps of the global lists
+        dump = {}
+        for key, todoitem in global_lists.items():
+            dump[key] = {
+                "list_name": todoitem.list_name,
+                "date": todoitem.date,
+                "todo_list": todoitem.todo_list
+            }
+
+        # Lets overwrite and create the save file
+        with open("pydosave.txt", "w+") as f:
+            json.dump(dump, f, indent=4, sort_keys=True, default=str)
+
+
+        print()
+        time.sleep(1.5)
         print(Fore.MAGENTA + "Exiting PyDo..." + Fore.RESET)
         break
 
@@ -268,6 +320,7 @@ while True:
         print(Fore.RED  + "ERROR: Command \"" + command + "\" is invalid")
 
 # Exit Screen
+time.sleep(1.5)
 print(Back.BLACK + Fore.GREEN + "=" * 60)
 print(Fore.GREEN + "        Thanks for using PyDo!")
 print(Fore.GREEN + "        Your tasks are safe 🐍")
