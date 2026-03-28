@@ -51,7 +51,6 @@ class todo:
         self.todo_list = list or {}
     
     def complete(self,num):
-        print(self.todo_list[num])
         self.todo_list[num][1] = True 
 
     def uncomplete(self,num):
@@ -160,7 +159,7 @@ def select_list(list_name):
                         list_instance.complete(parsed[1])
                         print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.GREEN + "✓ Task " + parsed[1] + " has been marked as completed!" + Fore.RESET)
                     except:
-                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "✗ ERROR: Task number \"" + parsed[1] + "\" is invalid!" + Fore.RESET)
+                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "✗ ERROR: Task number is invalid!" + Fore.RESET)
     
 
             elif parsed[0] == "uncom":
@@ -168,7 +167,7 @@ def select_list(list_name):
                         list_instance.uncomplete(parsed[1])
                         print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "✗ Task " + parsed[1] + " is now marked as uncompleted!" + Fore.RESET)
                     except:
-                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "ERROR: Task number \"" + parsed[1] + "\" is invalid!" + Fore.RESET)
+                        print(Fore.CYAN + "[TODO: " + list_name + "] " + Fore.RED + "ERROR: Task number is invalid!" + Fore.RESET)
     
             elif parsed[0] == "del":
 
