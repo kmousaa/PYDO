@@ -231,7 +231,6 @@ def select_list(list_name):
 
 
 def do_ai(instruction, list_name, current):
-    print("Current list data being sent to AI: " + str(current))
 
     rearrange_triggers = ["rearrange", "rearange", "reorder", "re-order", "sort", "prioritise", "prioritize","order","arange"]
 
