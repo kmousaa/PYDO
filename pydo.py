@@ -470,7 +470,7 @@ while True:
             print()
             print(Fore.RED + "ERROR: List name cannot be empty" + Fore.RESET)
         else:
-            create_list(parsed[1].strip())
+            create_list(" ".join(parsed[1:]).strip())
         
     elif parsed[0] == "view" or parsed[0] == "View":
         view_lists()
