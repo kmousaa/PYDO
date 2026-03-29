@@ -14,6 +14,7 @@ load_dotenv()
 
 if not os.getenv("GROQ_API_KEY"):
     print(Fore.YELLOW + "No Groq API key found!" + Fore.RESET)
+    print(Fore.YELLOW + "You would need one to use TOODLES, our AI-powered todo assistant!" + Fore.RESET)
     key = input(Fore.YELLOW + "Enter your Groq API key (get one free at console.groq.com): " + Fore.RESET)
     with open(".env", "w") as f:
         f.write(f"GROQ_API_KEY={key}")
@@ -331,7 +332,6 @@ def do_ai(instruction, list_name, current):
     raw = response.choices[0].message.content.strip()
     try:
         data = json.loads(raw)
-        print("Raw AI response: " + raw)
     except:
         # Assign returned list, its not a JSON object but a plain list of the new order of tasks
         start = raw.find("[")
